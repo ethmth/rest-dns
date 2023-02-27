@@ -38,6 +38,7 @@ app.get("/ip/:id", (req: Request, res: Response) => {
   }
 
   return res.json({
+    id: id,
     ip: ip,
     port: port,
   });
@@ -47,11 +48,12 @@ app.get("/ips", (req: Request, res: Response) => {
   //  console.log(ips.map);
   let jsonObj = [];
   for (let key in ips) {
-    console.log(`${key} and ${ips[key]}`);
-    console.log(ips[key]);
+    //    console.log(`${key} and ${ips[key]}`);
+    //   console.log(ips[key]);
 
     if (ips[key] != undefined) {
       jsonObj.push({
+        id: key,
         ip: ips[key].ip,
         port: ips[key].port,
       });
