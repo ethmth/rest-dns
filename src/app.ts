@@ -3,59 +3,63 @@ import express, { Request, Response } from "express";
 const PORT: number = 5000;
 
 const app = express();
+app.use(express.json());
 
 interface IPInfo {
   ip: String;
   port: String;
 }
 
-app.use(express.json());
-//app.use(express.urlencoded({ extended: true }));
-
 var ips: { [id: string]: IPInfo } = {};
 
 app.get("/", (req: Request, res: Response) => {
-  return res.send("Inavlid route. Try...");
-
-  //  return res.redirect("https://ethanmt.com/");
-  return res.json({
-    success: true,
-    name: "TomDoesTech",
-  });
+  return res.send("Inavlid route. Try /ip/:id");
 });
 
 app.post("/ip/:id", (req: Request, res: Response) => {
   const { id } = req.params;
 
-  // var myip: String = req.body.json("ip");
-  //console.log(req.body);
-  //console.log(req.body.ip);
-
   ips[id] = { ip: req.body.ip, port: req.body.port };
+  console.log(`POST /ip/${id}: ${ips[id]}`);
 
-  return res.send(200);
+  return res.send("Posted");
 });
 
 app.get("/ip/:id", (req: Request, res: Response) => {
   const { id } = req.params;
 
-  console.log(ips[id]);
+  console.log(`GET /ip/${id}: ${ips[id]}`);
 
   var ip: String = "none";
   var port: String = "none";
   if (ips[id] != undefined) {
-    //console.log(ips[id].ip);
     ip = ips[id].ip;
     port = ips[id].port;
   }
 
-  // return res.status(200);
-  //if (ips[id] !== null) {
   return res.json({
     ip: ip,
     port: port,
   });
-  //}
+});
+
+app.get("/ips", (req: Request, res: Response) => {
+  //  console.log(ips.map);
+  let jsonObj = [];
+  for (let key in ips) {
+    console.log(`${key} and ${ips[key]}`);
+    console.log(ips[key]);
+
+    if (ips[key] != undefined) {
+      jsonObj.push({
+        ip: ips[key].ip,
+        port: ips[key].port,
+      });
+    }
+  }
+
+  return res.json(jsonObj);
+  // const new = ips.map((ip) => `NEW${ip}`);
 });
 
 app.listen(PORT, () => {
