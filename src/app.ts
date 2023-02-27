@@ -1,9 +1,14 @@
+import { Socket } from "dgram";
 import express, { Request, Response } from "express";
+import { createServer } from "http";
+import { Server } from "socket.io";
 
 const PORT: number = 5000;
 
 const app = express();
 app.use(express.json());
+const httpServer = createServer(app);
+const io = new Server(httpServer);
 
 interface IPInfo {
   ip: String;
@@ -45,12 +50,8 @@ app.get("/ip/:id", (req: Request, res: Response) => {
 });
 
 app.get("/ips", (req: Request, res: Response) => {
-  //  console.log(ips.map);
   let jsonObj = [];
   for (let key in ips) {
-    //    console.log(`${key} and ${ips[key]}`);
-    //   console.log(ips[key]);
-
     if (ips[key] != undefined) {
       jsonObj.push({
         id: key,
@@ -61,9 +62,17 @@ app.get("/ips", (req: Request, res: Response) => {
   }
 
   return res.json(jsonObj);
-  // const new = ips.map((ip) => `NEW${ip}`);
 });
 
-app.listen(PORT, () => {
+io.on("connect", (socket) => {
+  console.log(`Client ${socket.id} connected.`);
+  socket.emit("message", "You've connected");
+});
+
+io.on("message", (msg) => {
+  console.log(`${msg}`);
+});
+
+httpServer.listen(PORT, () => {
   console.log(`Application listening at http://localhost:${PORT}`);
 });
