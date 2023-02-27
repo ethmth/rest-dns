@@ -6,7 +6,13 @@ app.use(express.json());
 //app.use(express.urlencoded({ extended: true }));
 
 app.get("/", (req: Request, res: Response) => {
-  return res.send("Hello World");
+  //    return res.send("Hello world");
+
+  //  return res.redirect("https://ethanmt.com/");
+  return res.json({
+    success: true,
+    name: "TomDoesTech",
+  });
 });
 
 app.post("/api/data", (req: Request, res: Response) => {
