@@ -73,6 +73,6 @@ io.on("connect", (socket) => {
   console.log(`Client ${socket.id} connected.`);
 });
 
-httpServer.listen(PORT, () => {
+httpServer.listen(PORT, "0.0.0.0", () => {
   console.log(`Application listening at http://localhost:${PORT}`);
 });
