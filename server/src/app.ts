@@ -2,7 +2,7 @@ import express, { Request, Response } from "express";
 import { createServer } from "http";
 import { Server } from "socket.io";
 
-const PORT: number = 8080;
+const PORT: number = 80;
 
 const app = express();
 app.use(express.json());
