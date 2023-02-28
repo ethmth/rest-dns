@@ -25,15 +25,21 @@ app.post("/ip/:id", (req: Request, res: Response) => {
   const { id } = req.params;
 
   ips[id] = { ip: req.body.ip, port: req.body.port };
-  console.log(`POST /ip/${id}: ${ips[id]}`);
+
+  io.emit(
+    "ip_posted",
+    JSON.stringify({
+      id: id,
+      ip: req.body.ip,
+      port: req.body.port,
+    })
+  );
 
   return res.send("Posted");
 });
 
 app.get("/ip/:id", (req: Request, res: Response) => {
   const { id } = req.params;
-
-  console.log(`GET /ip/${id}: ${ips[id]}`);
 
   var ip: String = "none";
   var port: String = "none";
@@ -66,11 +72,6 @@ app.get("/ips", (req: Request, res: Response) => {
 
 io.on("connect", (socket) => {
   console.log(`Client ${socket.id} connected.`);
-  socket.emit("message", "You've connected");
-});
-
-io.on("message", (msg) => {
-  console.log(`${msg}`);
 });
 
 httpServer.listen(PORT, () => {
