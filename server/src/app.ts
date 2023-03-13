@@ -13,6 +13,7 @@ const io = new Server(httpServer);
 interface IPInfo {
   ip: String;
   port: String;
+  local: String;
 }
 
 var ips: { [id: string]: IPInfo } = {};
@@ -21,10 +22,35 @@ app.get("/", (req: Request, res: Response) => {
   return res.send("Inavlid route. Try /ip/:id");
 });
 
+
+app.get("/ip/delete/:id", (req: Request, res: Response) => {
+    const { id } = req.params;
+
+    var ip: String = "none";
+    var port: String = "none";
+    var local: String = "none";
+    if(ips[id] != undefined) {
+        ip = ips[id].ip;
+        port = ips[id].port;
+        local = ips[id].local;
+
+        delete ips[id];
+
+        return res.json({
+            id: id,
+            ip: ip,
+            port: port,
+            local: local,
+        });
+    }
+
+    return "No device by that name";
+});
+
 app.post("/ip/:id", (req: Request, res: Response) => {
   const { id } = req.params;
 
-  ips[id] = { ip: req.body.ip, port: req.body.port };
+  ips[id] = { ip: req.body.ip, port: req.body.port, local: req.body.local };
 
   io.emit(
     "ip_posted",
@@ -32,6 +58,7 @@ app.post("/ip/:id", (req: Request, res: Response) => {
       id: id,
       ip: req.body.ip,
       port: req.body.port,
+      local: req.body.local,
     })
   );
 
@@ -41,7 +68,7 @@ app.post("/ip/:id", (req: Request, res: Response) => {
 app.post("/ip", (req: Request, res: Response) => {
   const id = req.body.id;
 
-  ips[id] = { ip: req.body.ip, port: req.body.port };
+  ips[id] = { ip: req.body.ip, port: req.body.port, local: req.body.local };
 
   io.emit(
     "ip_posted",
@@ -49,6 +76,7 @@ app.post("/ip", (req: Request, res: Response) => {
       id: id,
       ip: req.body.ip,
       port: req.body.port,
+      local: req.body.local,
     })
   );
 
@@ -60,15 +88,18 @@ app.get("/ip/:id", (req: Request, res: Response) => {
 
   var ip: String = "none";
   var port: String = "none";
+  var local: String = "none";
   if (ips[id] != undefined) {
     ip = ips[id].ip;
     port = ips[id].port;
+    local = ips[id].local;
   }
 
   return res.json({
     id: id,
     ip: ip,
     port: port,
+    local: local,
   });
 });
 
@@ -80,6 +111,7 @@ app.get("/ips", (req: Request, res: Response) => {
         id: key,
         ip: ips[key].ip,
         port: ips[key].port,
+        local: ips[key].local,
       });
     }
   }
