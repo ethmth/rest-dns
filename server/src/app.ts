@@ -36,15 +36,22 @@ app.get("/ip/delete/:id", (req: Request, res: Response) => {
 
         delete ips[id];
 
-        return res.json({
-            id: id,
-            ip: ip,
-            port: port,
-            local: local,
-        });
+        io.emit(
+            "ip_posted",
+            JSON.stringify({
+                id: id,
+                ip: ip,
+                port: port,
+                local: local,
+            })
+        );
     }
-
-    return "No device by that name";
+    return res.json({
+        id: id,
+        ip: ip,
+        port: port,
+        local: local,
+    });
 });
 
 app.post("/ip/:id", (req: Request, res: Response) => {

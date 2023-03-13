@@ -1,6 +1,6 @@
 #!/bin/sh
 
-LOCAL_IP="192.168.86.57"
+LOCAL_IP="192.168.86.56"
 
 curl -o /dev/null \
 	-X POST -H "Content-Type: application/json" \
