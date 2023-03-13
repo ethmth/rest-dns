@@ -2,6 +2,7 @@ import express, { Request, Response } from "express";
 import { createServer } from "http";
 import { Server } from "socket.io";
 
+//const PORT: number = 5000;
 const PORT: number = 80;
 
 const app = express();
@@ -22,6 +23,23 @@ app.get("/", (req: Request, res: Response) => {
 
 app.post("/ip/:id", (req: Request, res: Response) => {
   const { id } = req.params;
+
+  ips[id] = { ip: req.body.ip, port: req.body.port };
+
+  io.emit(
+    "ip_posted",
+    JSON.stringify({
+      id: id,
+      ip: req.body.ip,
+      port: req.body.port,
+    })
+  );
+
+  return res.send("Posted");
+});
+
+app.post("/ip", (req: Request, res: Response) => {
+  const id = req.body.id;
 
   ips[id] = { ip: req.body.ip, port: req.body.port };
 
