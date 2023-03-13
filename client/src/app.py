@@ -8,7 +8,9 @@ API_URL = "http://localhost:5000"
 if "API_URL" in os.environ:
 	API_URL = os.environ['API_URL']
 
-HOSTS_PATH="hosts.txt"
+HOSTS_PATH="hosts"
+if "HOSTS_PATH" in os.environ:
+	HOSTS_PATH = os.environ['HOSTS_PATH']
 
 def get_hosts():
     try: 
