@@ -1,8 +1,12 @@
 import socketio
 import requests
 from python_hosts import Hosts, HostsEntry
+import sys
+import os
 
 API_URL = "http://localhost:5000"
+if "API_URL" in os.environ:
+	API_URL = os.environ['API_URL']
 
 HOSTS_PATH="hosts.txt"
 

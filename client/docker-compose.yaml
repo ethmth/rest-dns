@@ -1,0 +1,11 @@
+version: "3"
+
+services:
+  rest-dns-client:
+    build:
+      context: .
+    container_name: rest-dns-client
+    volumes:
+      - /home/e/temp/hosts.txt:/opt/hosts.txt
+    environment:
+      - API_URL=http://127.0.0.1:5000
