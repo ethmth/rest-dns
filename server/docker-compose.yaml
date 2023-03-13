@@ -1,0 +1,9 @@
+version: "3"
+
+services:
+  rest-dns:
+    build:
+      context: .
+    ports:
+      - 5000:80
+    container_name: rest-dns
