@@ -1,8 +1,9 @@
 import socketio
 import requests
 from python_hosts import Hosts, HostsEntry
-import sys
 import os
+import signal
+import sys
 
 API_URL = "http://localhost:5000"
 if "API_URL" in os.environ:
@@ -12,12 +13,30 @@ HOSTS_PATH="hosts"
 if "HOSTS_PATH" in os.environ:
 	HOSTS_PATH = os.environ['HOSTS_PATH']
 
+
+HOSTS_OG="hosts_og"
+HOSTS_TEMP="hosts_temp"
+
+os.system(f'cp {HOSTS_PATH} {HOSTS_OG}')
+
+
+class GracefulKiller:
+    def __init__(self):
+        signal.signal(signal.SIGINT, self.exit_gracefully)
+        signal.signal(signal.SIGTERM, self.exit_gracefully)
+
+    def exit_gracefully(self, *args):
+        os.system(f'cat {HOSTS_OG} > {HOSTS_PATH}')
+        print("Gracefully exiting")
+        os.killpg(0, signal.SIGKILL)
+        quit()
+
 def get_hosts():
     try: 
         r = requests.get(url = f"{API_URL}/ips")
-        with open(HOSTS_PATH, 'w') as file:
+        with open(HOSTS_TEMP, 'w') as file:
             file.write("")
-        hosts = Hosts(path=HOSTS_PATH)
+        hosts = Hosts(path=HOSTS_TEMP)
         for ip in r.json():
             try:
                 if (hosts.exists(names=[f"{ip['id']}.remote"])):
@@ -35,6 +54,7 @@ def get_hosts():
                 hosts.write()
             except:
                 pass
+        os.system(f'cat {HOSTS_OG} {HOSTS_TEMP} > {HOSTS_PATH}')
 
     except:
         pass
@@ -52,5 +72,7 @@ def ip_posted(data):
     get_hosts()
     return
 
-sio.connect(API_URL)
-sio.wait()
+if __name__ == '__main__':
+    killer = GracefulKiller()
+    sio.connect(API_URL)
+    sio.wait()

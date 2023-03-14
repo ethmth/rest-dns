@@ -6,6 +6,6 @@ services:
       context: .
     container_name: rest-dns-client
     volumes:
-      - /opt/rest-dns-client/hosts:/opt/src/hosts
+      - /etc/hosts:/opt/src/hosts
     environment:
       - API_URL=http://192.168.86.56:5000
