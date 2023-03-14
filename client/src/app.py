@@ -5,13 +5,15 @@ import os
 import signal
 import sys
 
-API_URL = "http://localhost:5000"
+API_URL = "http://127.0.0.1:24601"
 if "API_URL" in os.environ:
 	API_URL = os.environ['API_URL']
 
 HOSTS_PATH="hosts"
 if "HOSTS_PATH" in os.environ:
 	HOSTS_PATH = os.environ['HOSTS_PATH']
+
+PORTS_PATH="ports"
 
 
 HOSTS_OG="hosts_og"
@@ -37,6 +39,7 @@ def get_hosts():
         with open(HOSTS_TEMP, 'w') as file:
             file.write("")
         hosts = Hosts(path=HOSTS_TEMP)
+        os.system(f'printf "" > {PORTS_PATH}')
         for ip in r.json():
             try:
                 if (hosts.exists(names=[f"{ip['id']}.remote"])):
@@ -52,6 +55,12 @@ def get_hosts():
                 entry = HostsEntry(entry_type='ipv4', address=f"{ip['local']}", names=[f"{ip['id']}.localnet"])
                 hosts.add([entry])
                 hosts.write()
+            except:
+                pass
+
+            try:
+                if ip['port'] != "none" and ip['port'] != "Invalid":
+                    os.system(f"echo '{ip['port']} {ip['id']}' >> {PORTS_PATH}")
             except:
                 pass
         os.system(f'cat {HOSTS_OG} {HOSTS_TEMP} > {HOSTS_PATH}')
